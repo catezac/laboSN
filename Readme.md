@@ -1,2 +1,3 @@
 **Welcome to LSN**
-I am Caterina and this is my repository for the LSN course
+
+I am Caterina and this is a very simple readme for the LSN course
