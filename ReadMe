@@ -1,0 +1,11 @@
+istruzioni per GitHub:
+
+git log         //mi dice la lista dei file
+
+git status      //mi dice quali file sono stati modificati rispetto all'ultima volta
+
+git add         //aggiunge i file che sono stati modificati
+
+git commit      //fa l'aggiornamento del file (come se fosse un'istantanea che traccia la storia del file)
+
+git push        //lo carica online
