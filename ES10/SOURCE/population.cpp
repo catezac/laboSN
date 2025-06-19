@@ -6,7 +6,7 @@
 using namespace std;
 using namespace arma;
 
-void Population :: initialize() {
+void Population :: initialize(int rank) {
     _nchrom = SetParameter("input.dat", "NCHROMOSOME");
     _p_permutation = SetParameter("input.dat", "P_PERMUTATION");
     _p_permutation_m = SetParameter("input.dat", "P_PERMUTATION_M");
@@ -15,6 +15,11 @@ void Population :: initialize() {
     _p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     _chromosome.set_size(_nchrom);
     _chromosome(0).configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+    for(int i = 0; i<rank; i++){
+        for(int j =0; j< _nchrom; j++){
+            _chromosome(j)._rnd.SetSeed(i);
+        }
+    }
     return;
 }
 
@@ -168,4 +173,33 @@ void Population::crossover(Chromosome& mother, Chromosome& father) {
             father = _chromosome(index2);
         }
     }
+}
+
+
+void Population:: Migration(int cores, int rank){
+    int N = _chromosome(0)._ncity;
+    vec best(N);
+    mat all_best(N,cores);
+    Chromosome _chromo_with_position = _chromosome(_nchrom-1);
+    for(int i = 0; i<N; i++){
+        best(i) = _chromosome(_nchrom-1)._cities(i).getpos(0);
+    }
+    MPI_Gather(&best, N, MPI_INT, &all_best, N*cores, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // mettere qualcosa per fare in modo che vengano un po mischiati i cromosomi
+
+    if(rank==0){
+        all_best = shuffle(all_best, 1);
+    } 
+    MPI_Bcast(&all_best, N, MPI_INT, 0, MPI_COMM_WORLD);
+
+    //mettere qualcosa in modo che i nuovi best ridiventino cromosomi associando id della citta a posizione
+    for(int i = 0; i<N; i++){
+        for(int j = 0; j < N; j++){
+            if(best(i) == _chromo_with_position._cities(j).getpos(0)){
+                _chromosome(_nchrom-1)._cities(i) = _chromo_with_position._cities(j);
+            }
+        }
+    }
+
 }

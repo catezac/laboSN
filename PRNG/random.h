@@ -26,7 +26,8 @@ public:
   // Destructor
   ~Random();
   // Method to set the seed for the RNG
-  void SetRandom(int * , int, int);
+  void SetRandom(int * , int, int); // set parameters and seed 
+  void SetSeed(int s); // set seed
   // Method to save the seed to a file
   void SaveSeed();
   // Method to generate a random number in the range [0,1)

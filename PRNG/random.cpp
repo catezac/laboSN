@@ -119,6 +119,10 @@ void Random :: SetRandom(int * s, int p1, int p2){
   return;
 }
 
+void Random :: SetSeed(int s){
+   l4 = s;
+}
+
 double Random :: Imp_sampling() {
    double y = Rannyu();
    return 1 - sqrt(1-y);

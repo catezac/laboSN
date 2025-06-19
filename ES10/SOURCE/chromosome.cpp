@@ -24,6 +24,10 @@ void Chromosome::Square(){ // creazione delle città nel quadrato
     }
 }
 
+int Chromosome:: get_ncity(){
+    return _ncity;
+}
+
 void Chromosome::configuration() { 
     // inizializzazione della config del sistema e settaggio delle posizioni delle città
     _ncity = SetParameter("input.dat", "NCITY");

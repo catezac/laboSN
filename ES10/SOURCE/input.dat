@@ -7,5 +7,6 @@ P_PERMUTATION_M        0.1
 P_SHIFT                0.2
 P_INVERSION            0.2
 P_CROSSOVER            0.8
+MIGRATION              50
 
 ENDINPUT

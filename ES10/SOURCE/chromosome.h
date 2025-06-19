@@ -7,13 +7,14 @@
 #include "/home/catezac/laboSN/PRNG/random.h"
 #include "funzioni.h"
 #include "city.h"
+#include "mpi.h"
 
 using namespace std;
 using namespace arma;
 
 class Chromosome {
     private:
-    Random _rnd;
+    
     string _config; // tipo di configurazione delle città
     vector<int> _x; // è un gene, cioè ogni elemento del cromosoma, salvo l'indice assegnato alla città
     
@@ -22,8 +23,9 @@ class Chromosome {
 
     public:
     field <City> _cities; //dove sono collocate le città
-    double _ncity; //numero di città prensenti
+    int _ncity; //numero di città prensenti
     string _check;
+    Random _rnd;
     
     Chromosome(){;};
     Chromosome(int N ){
@@ -31,6 +33,7 @@ class Chromosome {
         _cities.set_size(N);};
     void Circle();
     void Square();
+    int get_ncity();
     void configuration(); // leggo file input per settare alcuni valori e creo il primo cromosoma che è fatto da le 34 città in ordine
     void check(); /*funzione che controlla che il cromosoma rispetti i constraint:  
                         1. all the cities has to be visited once and only once
