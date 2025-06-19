@@ -13,8 +13,8 @@ int main() {
     Random rnd;
 
     int M=100000;         // Total number of throws
-    int N = 100;       // Number of blocks
-    double L = 0.8; // lenght of the needle
+    int N = 1000;       // Number of blocks
+    double L = 1; // lenght of the needle
     double d = 1.5; // distance between the lines
     vector <double> p(N,0); // prograssive sum of pi
     vector <double> p_ave(N,0); // comulatve average of pi
@@ -28,7 +28,7 @@ int main() {
         n.push_back(i);           // [0,1,2,...,N-1]
     }
 
-    for(int j = 0; j< N; j++) {
+    /*for(int j = 0; j< N; j++) {
         N_hit = 0;
         //sum_p = 0;
         for(int k = 0; k < N_throw ; k++) {
@@ -37,7 +37,28 @@ int main() {
             if(x <= L/2*sin(theta)) {
                 N_hit += 1;
             }
-            
+        }
+        p[j] = 2*L*N_throw/(N_hit*d); // pi estimation di un blocco
+        p_av2[j] = pow(p[j],2);
+    }*/
+
+    
+    for(int j = 0; j< N; j++) {
+        N_hit = 0;
+        //sum_p = 0;
+        for(int k = 0; k < N_throw ; k++) {
+            double x = rnd.Rannyu(0,d/2); // x coordinate of the center of the needle
+            // angle of the needle
+            double x_a, y_a, theta;
+            do{
+                x_a = rnd.Rannyu(-1,1);
+                y_a = rnd.Rannyu(-1,1);
+                theta = atan(x_a/y_a);
+            } while(x_a*x_a+y_a*y_a > 1);
+
+            if(x <= abs(L*sin(theta)/2)) {
+                N_hit += 1;
+            }
         }
         p[j] = 2*L*N_throw/(N_hit*d); // pi estimation di un blocco
         p_av2[j] = pow(p[j],2);
@@ -45,7 +66,7 @@ int main() {
 
     auto result = sum_prog(p, p_av2, N);
 
-    WriteToFile("pi_estimation.dat", N, n, N_throw, result.first, result.second);
+    WriteToFile("pi_estimation.dat", N, result.first, result.second);
 
     return 0;
 }

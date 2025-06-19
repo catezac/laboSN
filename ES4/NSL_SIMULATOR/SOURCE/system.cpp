@@ -239,6 +239,10 @@ void System :: initialize_velocities(){
         _particle(i).setpositold(0, this->pbc(_side(0)*xold, 0));
         _particle(i).setpositold(1, this->pbc(_side(1)*yold, 1));
         _particle(i).setpositold(2, this->pbc(_side(2)*zold, 2));
+
+        _particle(i).setvelocity(0, - _particle(i).getvelocity(0));
+        _particle(i).setvelocity(1, - _particle(i).getvelocity(1));
+        _particle(i).setvelocity(2, - _particle(i).getvelocity(2));
       }
     } else cerr << "PROBLEM: Unable to open INPUT file conf-1.xyz"<< endl;
     cinf.close();
@@ -370,7 +374,7 @@ void System :: initialize_properties(){ // Initialize data members used for meas
         coutpv.close();
         input>>_n_bins_v;
         _nprop += _n_bins_v;
-        _bin_size_v = 3.6*sqrt(_temp)/(double)_n_bins_v; // TO BE FIXED IN EXERCISE 4
+        _bin_size_v = 5*sqrt(_temp)/(double)_n_bins_v; // TO BE FIXED IN EXERCISE 4
         //_bin_size_v = 2.5*_temp/(double)_n_bins_v;
         _measure_pofv = true;
         _index_pofv = index_property; // _index_pofv è l'indice del primo bin per la distribuzione di velocità
@@ -564,11 +568,14 @@ void System :: measure(){ // Measure properties
   // POFV ... TO BE FIXED IN EXERCISE 4
   if(_measure_pofv) {
     for(int i = 0; i<_npart; i++){
+      //cout << "la velocità è della particella " << i << " è " << _particle(i).getvelocity(1) << endl;
       double v = sqrt( dot( _particle(i).getvelocity() , _particle(i).getvelocity() ));
+      //cout << "la velocità è " << v << endl;
       if(int(v/_bin_size_v) < _n_bins_v){
-        //cout << "prova" << i << ": " << _index_pofv + int(v/_bin_size_v) << endl;
+        // cout << "prova" << i << ": " << _index_pofv + int(v/_bin_size_v) << endl;
         _measurement(_index_pofv + int(v/_bin_size_v))++;
       } else {
+        //cout << "Warning: velocity out of range!" << i << endl; 
         _measurement(_index_pofv +_n_bins_v-1)++;
       }
     }
@@ -696,8 +703,8 @@ void System :: averages(int blk){
       sum_ave2 = _global_av2(_index_pofv + i);
       coutf << setw(12) << blk
             << setw(12) << _bin_size_v*i + (_bin_size_v)/2
-            << setw(12) << sum_average/double(blk)
-            << setw(12) << this->error(sum_average, sum_ave2, blk) << endl;
+            << setw(12) << (sum_average/double(blk))/(108*0.17)
+            << setw(12) << this->error(sum_average, sum_ave2, blk)/(108*0.17) << endl;
     }
     
     coutf.close();

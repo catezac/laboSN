@@ -13,7 +13,8 @@ using namespace std;
 
 double error(vector <double> AV, vector <double> AV2, int n); // error
 
-void WriteToFile(string filename, int N, vector<int> n, double L, vector<double> s, vector<double> err);
+void Write_config(string filename, int N, vector<Posizione> p);
+void WriteToFile(string filename, int N, vector<double> s, vector<double> err);
 void WriteToFile_RW(string filename, int N_step, vector<double> s, vector<double> err);
 
 pair<vector<double>, vector<double>> sum_prog(vector<double> ave, vector <double> av2, int N);

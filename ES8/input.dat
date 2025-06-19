@@ -1,0 +1,9 @@
+M                      100000
+M_equil                200
+N                      150
+N_step                 20000
+step                   0.1
+mu                     1.
+sigma                  1.
+
+ENDINPUT

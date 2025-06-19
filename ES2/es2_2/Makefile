@@ -14,7 +14,7 @@ funzioni.o : ../funzioni.cpp ../funzioni.h
 	$(CC) -c ../funzioni.cpp -o funzioni.o $(CFLAGS)
 	
 clean :
-	rm -f *.o main.exe seed.outR
+	rm -f *.o main.exe seed.out
 
 run : main.exe
 	./main.exe

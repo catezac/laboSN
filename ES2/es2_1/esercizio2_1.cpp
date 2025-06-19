@@ -14,10 +14,6 @@ int main(){
     int M = 100000;
     int N = 100;
     double L = M/N;
-    vector <int> n;
-    for(int i=0; i<N; i++) {
-        n.push_back(i);           // [0,1,2,...,N-1]
-    }
     
     vector<double> x(M);
     vector<double> y(M);
@@ -37,7 +33,7 @@ int main(){
     }
 
     auto result = sum_prog(ave, av2, N);
-    WriteToFile("integral1.dat", N, n, L, result.first, result.second);
+    WriteToFile("integral1.dat", N, result.first, result.second);
     
     // importance sampling, uso come probabilità p(x) = 2(1-x) e come funzione g(x) = pi/2 * cos(pi/2 * x) / 2(1-x)
     vector<double> x_is(M);
@@ -59,7 +55,7 @@ int main(){
     }
 
     auto result_is = sum_prog(ave_is, av2_is, N);
-    WriteToFile("integral2.dat", N, n, L, result_is.first, result_is.second);
+    WriteToFile("integral2.dat", N, result_is.first, result_is.second);
 
     return 0;
 }

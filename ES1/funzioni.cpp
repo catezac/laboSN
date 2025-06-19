@@ -11,11 +11,11 @@ double error(vector <double> AV, vector <double> AV2, int n) {
         return sqrt((AV2[n] - pow(AV[n],2))/n);
 };
 
-void WriteToFile(string filename, int N, vector<int> n, double L, vector<double> s, vector<double> err) {
+void WriteToFile(string filename, int N, vector<double> s, vector<double> err) {
     ofstream file(filename);
     if (file.is_open()) {
         for (int i = 0; i < N; i++) {
-            file << n[i] * L << " " << s[i] << " " << err[i] << endl;
+            file << i+1 << " " << s[i] << " " << err[i] << endl;
         }
         file.close();
     } else {    cerr << "Unable to open " << filename << endl; }
