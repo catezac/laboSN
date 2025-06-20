@@ -27,7 +27,9 @@ class Chromosome {
     string _check;
     Random _rnd;
     
-    Chromosome(){;};
+    Chromosome(){
+        _ncity = SetParameter("input.dat", "NCITY");
+        _cities.set_size(_ncity);};
     Chromosome(int N ){
         _ncity = N;
         _cities.set_size(N);};

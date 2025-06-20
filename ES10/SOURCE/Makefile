@@ -11,7 +11,7 @@ all: $(EXE)
 $(EXE): $(OBJ)
 	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
 
-%.o: %.cpp
+%.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

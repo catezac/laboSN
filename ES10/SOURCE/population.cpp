@@ -14,7 +14,7 @@ void Population :: initialize(int rank) {
     _p_inversion = SetParameter("input.dat", "P_INVERSION");
     _p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     _chromosome.set_size(_nchrom);
-    _chromosome(0).configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+    first_order.configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
     for(int i = 0; i<rank; i++){
         for(int j =0; j< _nchrom; j++){
             _chromosome(j)._rnd.SetSeed(i);
@@ -25,7 +25,7 @@ void Population :: initialize(int rank) {
 
 void Population::first_popul(){  //creo la prima popolazione permutando in ogni cromosoma due città casuali, tenendo conto che la prima città deve rimanere ferma
     for(int j = 1; j<_nchrom; j++){
-        _chromosome(j) = _chromosome(0);
+        _chromosome(j) = first_order;
         for(int i = 0; i< 2*34; i++){
             _chromosome(j).permutation(); 
         }
@@ -176,30 +176,37 @@ void Population::crossover(Chromosome& mother, Chromosome& father) {
 }
 
 
+void Population::FromOrder(vec best){
+    int N = best.size();
+    for(int i = 0; i<N; i++){
+        for(int j = 0; j < N; j++){
+            if(best(i) == first_order._cities(j).getpos(0)){
+                _chromosome(_nchrom-1)._cities(i) = first_order._cities(j);
+            }
+        }
+    }
+}
+
 void Population:: Migration(int cores, int rank){
     int N = _chromosome(0)._ncity;
     vec best(N);
     mat all_best(N,cores);
-    Chromosome _chromo_with_position = _chromosome(_nchrom-1);
     for(int i = 0; i<N; i++){
         best(i) = _chromosome(_nchrom-1)._cities(i).getpos(0);
     }
     MPI_Gather(&best, N, MPI_INT, &all_best, N*cores, MPI_INT, 0, MPI_COMM_WORLD);
-
+    cout << "ho raccolto i migliori del rank  " << rank << endl; 
+        
     // mettere qualcosa per fare in modo che vengano un po mischiati i cromosomi
 
     if(rank==0){
         all_best = shuffle(all_best, 1);
     } 
     MPI_Bcast(&all_best, N, MPI_INT, 0, MPI_COMM_WORLD);
-
+    cout << "ho ricostruito la prima popolazione nel core " << rank << endl; 
+    
     //mettere qualcosa in modo che i nuovi best ridiventino cromosomi associando id della citta a posizione
-    for(int i = 0; i<N; i++){
-        for(int j = 0; j < N; j++){
-            if(best(i) == _chromo_with_position._cities(j).getpos(0)){
-                _chromosome(_nchrom-1)._cities(i) = _chromo_with_position._cities(j);
-            }
-        }
-    }
+    FromOrder(best);
+        
 
 }

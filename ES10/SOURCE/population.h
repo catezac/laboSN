@@ -21,6 +21,7 @@ class Population {
         
     public:
     field <Chromosome> _chromosome;
+    Chromosome first_order;
     int _nchrom;
     Population(){;};
     Population(int N ){
@@ -37,8 +38,10 @@ class Population {
 
     //void crossing(Chromosome& mother, Chromosome& father);
     void crossover(Chromosome& mother, Chromosome& father);   //  taglia i due cammini nella stessa posizione, conserva la prima parte di entrambi e completa la seconda parte con le citta mancanti nell'ordine in cui appaiono nell'altro cammino        
+    void FromOrder(vec best);
     // per la migrazione
     void Migration(int cores, int rank);
+    
 };
 
 #endif

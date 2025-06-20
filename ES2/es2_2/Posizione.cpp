@@ -19,8 +19,6 @@ Posizione::Posizione(double x, double y, double z)
   y = y;
   z = z;
 }
-
-
 // Destructor
 //Posizione::~Posizione() {}
 
