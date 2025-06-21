@@ -35,6 +35,7 @@ class Chromosome {
         _cities.set_size(N);};
     void Circle();
     void Square();
+    void File(string filename);
     int get_ncity();
     void configuration(); // leggo file input per settare alcuni valori e creo il primo cromosoma che è fatto da le 34 città in ordine
     void check(); /*funzione che controlla che il cromosoma rispetti i constraint:  

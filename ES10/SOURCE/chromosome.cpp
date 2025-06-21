@@ -24,6 +24,30 @@ void Chromosome::Square(){ // creazione delle città nel quadrato
     }
 }
 
+void Chromosome::File(string filename){
+    ifstream read(filename);
+    if (!read.is_open()) {
+        cerr << "Errore nell'apertura del file!" << std::endl;
+        return 1;
+    }
+    int N=0;
+    string riga;
+    while(getline(filename, riga)){
+        N++;
+    }
+    _ncity = N;
+
+    for(int i = 0; i<N;i++){
+        read >> x >> y;
+        _cities(i)._pos[0] = i;
+        _cities(i)._pos[1] = x;
+        _cities(i)._pos[2] = y;
+    }
+
+    read.close();
+}
+
+
 int Chromosome:: get_ncity(){
     return _ncity;
 }

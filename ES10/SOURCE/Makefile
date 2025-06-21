@@ -2,9 +2,9 @@ CXX = mpicxx
 CXXFLAGS = -O3 --std=c++14
 LDFLAGS = -larmadillo
 
-SRC = parallel.cpp funzioni.cpp city.cpp chromosome.cpp population.cpp
+SRC = main.cpp funzioni.cpp city.cpp chromosome.cpp population.cpp
 OBJ = $(SRC:.cpp=.o) ../../PRNG/random.o
-EXE = simulator.exe
+EXE = main.exe
 
 all: $(EXE)
 
