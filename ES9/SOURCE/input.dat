@@ -1,5 +1,5 @@
 NCITY                  34
-CONFIGURATION          square   1.
+CONFIGURATION          circle   1.
 NCHROMOSOME            400
 NGENERATIONS           400
 P_PERMUTATION          0.15
