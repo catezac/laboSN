@@ -24,24 +24,43 @@ void Chromosome::Square(){ // creazione delle città nel quadrato
     }
 }
 
+Chromosome& Chromosome::operator=(const Chromosome& other) {
+    if (this != &other) {
+        _cities = other._cities;
+        _ncity = other._ncity;
+        _check = other._check;
+        _radius = other._radius;
+        _length = other._length;
+        _config = other._config;
+        _x = other._x;
+        _rnd = other._rnd;
+    }
+    return *this;
+}
+
 void Chromosome::File(string filename){
     ifstream read(filename);
+    
     if (!read.is_open()) {
         cerr << "Errore nell'apertura del file!" << std::endl;
-        return 1;
     }
     int N=0;
     string riga;
-    while(getline(filename, riga)){
+    while(getline(read, riga)){
         N++;
     }
+    // Torna all'inizio del file
+    read.clear();           // resetta EOF
+    read.seekg(0, ios::beg); // torna all'inizio
     _ncity = N;
-
+    _cities.set_size(int(_ncity));
+    double x = 0;
+    double y = 0;
     for(int i = 0; i<N;i++){
         read >> x >> y;
-        _cities(i)._pos[0] = i;
-        _cities(i)._pos[1] = x;
-        _cities(i)._pos[2] = y;
+        _cities(i)._pos(0) = i;
+        _cities(i)._pos(1) = x;
+        _cities(i)._pos(2) = y;
     }
 
     read.close();
@@ -57,13 +76,16 @@ void Chromosome::configuration() {
     _ncity = SetParameter("input.dat", "NCITY");
     auto c = SetConfig("input.dat", "CONFIGURATION");
     _config = c.first;
-    _cities.set_size(int(_ncity));
     if(_config == "circle"){
-        _radius = c.second;
+        _cities.set_size(int(_ncity));
+        _radius = stod(c.second);
         Circle();
     } else if(_config == "square"){
-        _length = c.second;
+        _cities.set_size(int(_ncity));
+        _length = stod(c.second);
         Square();   
+    } else if(_config == "file"){
+        File(c.second);
     } else {
         cerr << "PROBLEM: unknown configuration" << endl;
         exit(EXIT_FAILURE);

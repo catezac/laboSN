@@ -6,8 +6,6 @@
 using namespace std;
 using namespace arma;
 
-
-
 vec City::getpos(){
     return _pos;
 }
@@ -21,6 +19,14 @@ bool City::operator==(City a){
 }
 bool City::operator!=(City a){
     return all(_pos!=a.getpos());
+}
+
+City& City::operator=(const City& other) {
+    if (this != &other) {
+        _pos = other._pos;
+        // altri membri se presenti
+    }
+    return *this;
 }
 
 void City::setpos(int i, double val){

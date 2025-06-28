@@ -22,6 +22,7 @@ class City {
         _pos.set_size(3);};
     vec getpos();
     double getpos(int i);
+    City& operator=(const City& other);
     bool operator==(City a);
     bool operator!=(City a);
     void setpos(int i, double val);

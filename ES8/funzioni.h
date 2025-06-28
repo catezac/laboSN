@@ -14,7 +14,7 @@ using namespace std;
 double SetParameter(string file,string prop);
 void initialize_parameters(int &M, int &M_equil, int &N, int &N_step, double &step, double &mu, double &sigma);
 double eval_psi(double x, double mu, double sigma);
-double eval_Hpsi( double x, double sigma, double mu, double hbar, double m);
+double eval_Hpsi( double x, double mu, double sigma, double hbar, double m);
 void metro(Random &rnd, double step, double &x, double mu, double sigma, double &acceptance); // Metropolis algorithm
 void equilibration(Random &rnd, int M_equil, double &x, double mu, double sigma, double &step, double &acceptance);
 double error(vector <double> AV, vector <double> AV2, int n); // error

@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     vec L1_medio(n_generations);
     vec L1(n_generations);
     pop.sorting();
-    pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config_iniziale.dat");
+    if(rank == 0)    pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config_iniziale.dat");
     for(int i = 0; i < n_generations; i++) {
         pop.sorting();
         L1(i) = pop._chromosome(pop._nchrom - 1).loss();
@@ -45,19 +45,18 @@ int main(int argc, char* argv[]) {
         }
         pop = new_pop;
         pop.Mutation();
-        if(i%migration == 0){
+        if(i%migration == 0 & i !=0){
+            pop.sorting();
             pop.Migration(size, rank);
-            cout << "ho migrato la prima popolazione nel core " << rank << endl; 
-        
         }
         //pop.sorting();
         //L1(i) = pop._chromosome(pop._nchrom - 1).loss();
     }
-    //pop.sorting();
-    if(rank== 1){
+    pop.sorting();
+    if(rank== 0){
         pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config.dat");
-        //WriteToFile("../OUTPUT/L1_medio.dat", n_generations, L1_medio);
-        //WriteToFile("../OUTPUT/L1_best.dat", n_generations, L1);
+        WriteToFile("../OUTPUT/L1_medio.dat", n_generations, L1_medio);
+        WriteToFile("../OUTPUT/L1_best.dat", n_generations, L1);
     }
     MPI_Finalize();
     return 0;

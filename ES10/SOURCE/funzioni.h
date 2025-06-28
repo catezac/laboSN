@@ -13,7 +13,7 @@ using namespace arma;
 double SetParameter(string filename, string prop);
 
 // Legge una configurazione (stringa + valore) da file
-pair<string, double> SetConfig(string filename, string prop);
+pair<string, string> SetConfig(string filename, string prop);
 
 void WriteToFile(string filename, int N, vec L2);
 

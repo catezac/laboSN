@@ -21,11 +21,11 @@ double SetParameter(string file,string prop) {
     return r;
 };
 
-pair<string, double> SetConfig(string filename, string prop) {
+pair<string, string> SetConfig(string filename, string prop) {
     ifstream fin(filename);
     string input;
     string config;
-    double r;
+    string r;
     if(fin.is_open()){
         while(!fin.eof()){
             fin >> input;

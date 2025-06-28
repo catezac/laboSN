@@ -15,6 +15,7 @@ void Population :: initialize(int rank) {
     _p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     _chromosome.set_size(_nchrom);
     first_order.configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+
     for(int i = 0; i<rank; i++){
         for(int j =0; j< _nchrom; j++){
             _chromosome(j)._rnd.SetSeed(i);
@@ -181,7 +182,9 @@ void Population::FromOrder(vec best){
     for(int i = 0; i<N; i++){
         for(int j = 0; j < N; j++){
             if(best(i) == first_order._cities(j).getpos(0)){
-                _chromosome(_nchrom-1)._cities(i) = first_order._cities(j);
+                _chromosome(_nchrom-1)._cities(i).setpos(0,first_order._cities(j).getpos(0));
+                _chromosome(_nchrom-1)._cities(i).setpos(1,first_order._cities(j).getpos(1));
+                _chromosome(_nchrom-1)._cities(i).setpos(2,first_order._cities(j).getpos(2));
             }
         }
     }
@@ -194,19 +197,16 @@ void Population:: Migration(int cores, int rank){
     for(int i = 0; i<N; i++){
         best(i) = _chromosome(_nchrom-1)._cities(i).getpos(0);
     }
-    MPI_Gather(&best, N, MPI_INT, &all_best, N*cores, MPI_INT, 0, MPI_COMM_WORLD);
-    cout << "ho raccolto i migliori del rank  " << rank << endl; 
-        
-    // mettere qualcosa per fare in modo che vengano un po mischiati i cromosomi
+    MPI_Gather(best.memptr(), N, MPI_INTEGER, all_best.memptr(), N, MPI_INTEGER, 0, MPI_COMM_WORLD);
 
     if(rank==0){
         all_best = shuffle(all_best, 1);
-    } 
-    MPI_Bcast(&all_best, N, MPI_INT, 0, MPI_COMM_WORLD);
-    cout << "ho ricostruito la prima popolazione nel core " << rank << endl; 
-    
-    //mettere qualcosa in modo che i nuovi best ridiventino cromosomi associando id della citta a posizione
-    FromOrder(best);
-        
+    }
 
+    MPI_Bcast(all_best.memptr(), N*cores, MPI_INTEGER, 0, MPI_COMM_WORLD);
+    //mettere qualcosa in modo che i nuovi best ridiventino cromosomi associando id della citta a posizione
+    FromOrder(all_best.col(rank));
+    //for(int i = 0; i < 34; i++){
+    //    if (rank == 0) cout << _chromosome(_nchrom-1)._cities(i).getpos(0) << endl;
+    //}
 }

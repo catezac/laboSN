@@ -17,4 +17,6 @@ $(EXE): $(OBJ)
 clean:
 	rm -f *.o $(EXE)
 
+run: mpiexec -np 2 main.exe
+
 .PHONY: all clean

@@ -25,10 +25,10 @@ int main (int argc, char *argv[]){
     for(int j=0; j < SYS.get_nsteps(); j++){ //loop over steps in a block
       SYS.step();
       SYS.measure();
-      if(j%50 == 0){
-        SYS.write_XYZ(nconf); //Write actual configuration in XYZ format //Commented to avoid "filesystem full"! 
-        nconf++;
-      }
+      //if(j%50 == 0){
+      //  SYS.write_XYZ(nconf); //Write actual configuration in XYZ format //Commented to avoid "filesystem full"! 
+      //  nconf++;
+      //}
     }
     SYS.averages(i+1);
     SYS.block_reset(i+1);

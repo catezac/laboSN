@@ -22,7 +22,7 @@ double SetParameter(string file,string prop) {
 double eval_psi(double x, double mu, double sigma) {
     return exp(-pow((x-mu),2)/(2*pow(sigma,2))) + exp(-pow((x+mu),2)/(2*pow(sigma,2)));
 }
-
+/*
 double eval_Hpsi(double x, double mu, double sigma, double hbar, double m) {
     // coefficienti utili
     double sigma2 = sigma * sigma;
@@ -44,7 +44,28 @@ double eval_Hpsi(double x, double mu, double sigma, double hbar, double m) {
     double potential = pow(x, 4) - 5*pow(x, 2) /2;
 
     return kinetic + potential;
+}*/
+
+
+double eval_Hpsi(double x, double mu, double sigma, double hbar = 1.0, double m = 1.0) {
+    double sigma2 = sigma * sigma;
+    double sigma4 = sigma2 * sigma2;
+
+    double exp1 = exp(- (x - mu) * (x - mu) / (2.0 * sigma2));
+    double exp2 = exp(- (x + mu) * (x + mu) / (2.0 * sigma2));
+    double psi = exp1 + exp2;
+
+    double d2_exp1 = ((x - mu)*(x - mu) - sigma2) / sigma4 * exp1;
+    double d2_exp2 = ((x + mu)*(x + mu) - sigma2) / sigma4 * exp2;
+    double psi_dd = d2_exp1 + d2_exp2;
+
+    double kinetic = - (hbar * hbar) / (2.0 * m) * (psi_dd / psi);
+    double potential = pow(x, 4) - 2.5 * x * x;
+
+    return kinetic + potential;
 }
+
+
 
 void metro(Random &rnd, double step, double &x, double mu, double sigma, double &acceptance){ // Metropolis algorithm
     double r, x_new, alpha;
@@ -95,7 +116,7 @@ void WriteToFile_mu_sigma(string filename, double N_step, vector<double> T, vect
             file << i << " " << T[i] << " " << mu[i] << " " << sigma[i] << " " << Hmedio[i] << " " << err_Hmedio[i] << endl;
         }
         file.close();
-    } else {    cerr << "Unable to open " << filename << endl; }
+    } else { cerr << "Unable to open " << filename << endl; }
 }
 
 pair<vector<double>, vector<double>> sum_prog(vector<double> ave, vector <double> av2, int N) {
@@ -115,4 +136,3 @@ pair<vector<double>, vector<double>> sum_prog(vector<double> ave, vector <double
 
     return make_pair(sum_prog, err_prog);
 }
-

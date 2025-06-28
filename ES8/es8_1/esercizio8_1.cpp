@@ -4,15 +4,17 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <iomanip>
 #include "../funzioni.h"
 #include "/home/catezac/laboSN/PRNG/random.h"
+
 
 int main() {
 
     Random rnd;
     double step = SetParameter("../input.dat", "step");
-    double mu = SetParameter("../input.dat", "mu_iniz");
-    double sigma = SetParameter("../input.dat", "sigma_iniz");
+    double mu = SetParameter("../input.dat", "mu");
+    double sigma = SetParameter("../input.dat", "sigma");
     int M = SetParameter("../input.dat", "M");
     int M_equil = SetParameter("../input.dat", "M_equil");
     int N = SetParameter("../input.dat", "N");

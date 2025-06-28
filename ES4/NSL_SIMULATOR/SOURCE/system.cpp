@@ -239,10 +239,6 @@ void System :: initialize_velocities(){
         _particle(i).setpositold(0, this->pbc(_side(0)*xold, 0));
         _particle(i).setpositold(1, this->pbc(_side(1)*yold, 1));
         _particle(i).setpositold(2, this->pbc(_side(2)*zold, 2));
-
-        _particle(i).setvelocity(0, - _particle(i).getvelocity(0));
-        _particle(i).setvelocity(1, - _particle(i).getvelocity(1));
-        _particle(i).setvelocity(2, - _particle(i).getvelocity(2));
       }
     } else cerr << "PROBLEM: Unable to open INPUT file conf-1.xyz"<< endl;
     cinf.close();
@@ -740,6 +736,27 @@ int System :: get_nsteps(){
   return _nsteps;
 }
 
+void System:: Inverse(){
+  for(int i=0; i<_npart; i++){
+        vec x_old(3);
+        vec x_new(3);
+        x_old(0) = _particle(i).getposition(0, false);
+        x_old(1) = _particle(i).getposition(1, false);
+        x_old(2) = _particle(i).getposition(2, false);
+
+        x_new(0) = _particle(i).getposition(0, true);
+        x_new(1) = _particle(i).getposition(1, true);
+        x_new(2) = _particle(i).getposition(2, true);
+
+        _particle(i).setposition(0, x_old(0));
+        _particle(i).setposition(1, x_old(1));
+        _particle(i).setposition(2, x_old(2));
+
+        _particle(i).setpositold(0, x_new(0));
+        _particle(i).setpositold(1, x_new(1));
+        _particle(i).setpositold(2, x_new(2));
+        }
+}
 /****************************************************************
 *****************************************************************
     _/    _/  _/_/_/  _/       Numerical Simulation Laboratory
