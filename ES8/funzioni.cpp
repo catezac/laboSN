@@ -22,29 +22,6 @@ double SetParameter(string file,string prop) {
 double eval_psi(double x, double mu, double sigma) {
     return exp(-pow((x-mu),2)/(2*pow(sigma,2))) + exp(-pow((x+mu),2)/(2*pow(sigma,2)));
 }
-/*
-double eval_Hpsi(double x, double mu, double sigma, double hbar, double m) {
-    // coefficienti utili
-    double sigma2 = sigma * sigma;
-    double sigma4 = sigma2 * sigma2;
-    //double a = 1.0 / (2.0 * sigma2);
-    double b = mu / sigma2;
-
-    // rapporto Psi''(x) / Psi(x)
-    double term1 = x * x / sigma4;
-    double term2 = (2.0 * mu * x / sigma4) * tanh(b * x);
-    double term3 = 1.0 / sigma2;
-    double term4 = (mu * mu) / sigma4;
-    double psi2_over_psi = term1 - term2 - term3 + term4;
-
-    // parte cinetica: -(ħ^2 / 2m) * (Psi''/Psi)
-    double kinetic = - (hbar * hbar / (2.0 * m)) * psi2_over_psi;
-
-    // parte potenziale: V(x)
-    double potential = pow(x, 4) - 5*pow(x, 2) /2;
-
-    return kinetic + potential;
-}*/
 
 
 double eval_Hpsi(double x, double mu, double sigma, double hbar = 1.0, double m = 1.0) {

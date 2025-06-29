@@ -33,15 +33,13 @@ int main() {
 
     for(int i = 0; i < N; i++) {
         double sum = 0;
-        double sum2 = 0;
         for(int j = 0; j < L; j++) {
             metro(rnd, step, x, mu, sigma, acceptance);
             Hpsi = eval_Hpsi(x, mu, sigma, 1.0, 1.0);
             sum += Hpsi;
-            sum2 += pow(Hpsi, 2);
         }
         ave[i] = sum / L;
-        av2[i] = sum2 / L;
+        av2[i] = pow(ave[i],2);
         err[i] = error(ave, av2, i);
     }
 

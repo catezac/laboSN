@@ -70,16 +70,14 @@ int main(){
         
         for(int i = 0; i < N; i++) {
             double sum = 0;
-            double sum2 = 0;
             x = x_start;
             for(int j = 0; j < L; j++) {
                 metro(rnd, step, x, mu[k], sigma[k], acceptance);
                 Hpsi = eval_Hpsi(x, mu[k], sigma[k], 1.0, 1.0);
                 sum += Hpsi;
-                sum2 += pow(Hpsi, 2);
             }
             ave[i] = sum / L;
-            av2[i] = sum2 / L;
+            av2[i] = pow(ave[i],2);
             err[i] = error(ave, av2, i);
         } 
         auto result = sum_prog(ave, av2, N);
@@ -114,7 +112,7 @@ int main(){
     vector<double> av2(N);
     vector<double> err(N);
 
-    cout << "Valori di sigma e mu migliori: " << endl;
+    cout << "\n Valori di sigma e mu migliori: " << endl;
     cout << setprecision(5) << "       sigma = " << sigma_best << endl;
     cout << setprecision(5) << "       mu = " << mu_best << endl;
     ofstream file("probability.dat");
