@@ -1,8 +1,8 @@
-M                      100000
+M                      1000000
 M_equil                2000
-N                      1000
-passo_gs               0.1
-passo_2p               0.1
+N                      5000
+passo_gs               0.7
+passo_2p               1.7
 method                 gauss
 
 ENDINPUT
