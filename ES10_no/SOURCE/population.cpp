@@ -6,7 +6,7 @@
 using namespace std;
 using namespace arma;
 
-void Population :: initialize() {
+void Population :: initialize(int rank) {
     _nchrom = SetParameter("input.dat", "NCHROMOSOME");
     _p_permutation = SetParameter("input.dat", "P_PERMUTATION");
     _p_permutation_m = SetParameter("input.dat", "P_PERMUTATION_M");
@@ -14,13 +14,19 @@ void Population :: initialize() {
     _p_inversion = SetParameter("input.dat", "P_INVERSION");
     _p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     _chromosome.set_size(_nchrom);
-    _first.configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+    first_order.configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+
+    for(int i = 0; i<rank; i++){
+        for(int j =0; j< _nchrom; j++){
+            _chromosome(j)._rnd.SetSeed(i);
+        }
+    }
     return;
 }
 
 void Population::first_popul(){  //creo la prima popolazione permutando in ogni cromosoma due città casuali, tenendo conto che la prima città deve rimanere ferma
-    for(int j = 0; j<_nchrom; j++){
-        _chromosome(j) = _first;
+    for(int j = 1; j<_nchrom; j++){
+        _chromosome(j) = first_order;
         for(int i = 0; i< 2*34; i++){
             _chromosome(j).permutation(); 
         }
@@ -170,36 +176,29 @@ void Population::crossover(Chromosome& mother, Chromosome& father) {
     }
 }
 
-void Population:: FromOrder(ivec best, Chromosome& chrom){
+
+void Population::FromOrder(vec best){
     int N = best.size();
-    for(int i = 0; i< N; i++){
-        for(int j= 0; j<N; j++){
-            //cout << best(i)<< "     " <<  _first._cities(j).getpos(0) << endl;
-            if(best(i)==_first._cities(j).getpos(0)){
-                cout << "Sto ricostruendo il cammino con la città" << i << endl;
-                chrom._cities(i).setpos(0, _first._cities(j).getpos(0));
-                chrom._cities(i).setpos(1, _first._cities(j).getpos(1));
-                chrom._cities(i).setpos(2, _first._cities(j).getpos(2));
-                break;
+    for(int i = 0; i<N; i++){
+        for(int j = 0; j < N; j++){
+            if(best(i) == first_order._cities(j).getpos(0)){
+                _chromosome(_nchrom-1)._cities(i).setpos(0,first_order._cities(j).getpos(0));
+                _chromosome(_nchrom-1)._cities(i).setpos(1,first_order._cities(j).getpos(1));
+                _chromosome(_nchrom-1)._cities(i).setpos(2,first_order._cities(j).getpos(2));
             }
         }
     }
-    for(int i = 0; i< N; i++){
-        cout << _first._cities(i).getpos(0) << "        " << chrom._cities(i).getpos(0) << endl;
-    }
+    _chromosome(_nchrom-1).check();
+    if(_chromosome(_nchrom-1)._check == "no") cout << "Errore nella creazione del cromosoma dopo la migrazione" << endl;
 }
 
 void Population:: Migration(int cores, int rank){
-    int N = _first._ncity;
-    // cout << N << endl;
-    // cout << _chromosome(_nchrom-1)._ncity << endl;
-    ivec best(N);
-    imat all_best(N,cores);
+    int N = _chromosome(0)._ncity;
+    vec best(N);
+    mat all_best(N,cores);
     for(int i = 0; i<N; i++){
-        best(i) = int(_chromosome(_nchrom-1)._cities(i).getpos(0));
+        best(i) = _chromosome(_nchrom-1)._cities(i).getpos(0);
     }
-
-    //best.print();
     MPI_Gather(best.memptr(), N, MPI_INTEGER, all_best.memptr(), N, MPI_INTEGER, 0, MPI_COMM_WORLD);
 
     if(rank==0){
@@ -208,10 +207,8 @@ void Population:: Migration(int cores, int rank){
 
     MPI_Bcast(all_best.memptr(), N*cores, MPI_INTEGER, 0, MPI_COMM_WORLD);
     //mettere qualcosa in modo che i nuovi best ridiventino cromosomi associando id della citta a posizione
-    FromOrder(all_best.col(rank), _chromosome(_nchrom-1));
-    // if (rank == 1){
-        // for(int i = 0; i < N; i++){
-            // cout << all_best.col(rank) << "        " << _first._cities(i).getpos(0)<< "       "<<_chromosome(_nchrom-1)._cities(i).getpos(0) << endl;
-        // }
-    // }
+    FromOrder(all_best.col(rank));
+    //for(int i = 0; i < 34; i++){
+    //    if (rank == 0) cout << _chromosome(_nchrom-1)._cities(i).getpos(0) << endl;
+    //}
 }

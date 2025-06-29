@@ -10,24 +10,24 @@
 #include "chromosome.h"
 #include "mpi.h"
 
-
 using namespace std;
 using namespace arma;
 
 class Population {
     private:
     Random _rnd;
-    Chromosome _first;
-    double _p_permutation, _p_permutation_m, _p_shift, _p_inversion, _p_crossover;
     
+    double _p_permutation, _p_permutation_m, _p_shift, _p_inversion, _p_crossover;
+        
     public:
     field <Chromosome> _chromosome;
+    Chromosome first_order;
     int _nchrom;
     Population(){;};
     Population(int N ){
         _nchrom = N;
         _chromosome.set_size(N);};
-    void initialize();  // inizializzo il sistema 
+    void initialize(int rank);  // inizializzo il sistema 
     void first_popul(); /*creo la prima popolazione: primo cromosoma che rispetta i vincoli banale è [1,2,3,..., 34]
                            per creare gli altri si permutano città in individui gia presenti, infatti la permutazione non rompe i vincoli */
     void sorting();     //riordina la popolazione da quello con funzione loss più alta a funzione loss piu bassa
@@ -35,11 +35,12 @@ class Population {
     
     int selection();   // selection operator with the algorithm: j = int(M*r^p)+1
     void Mutation();
-    void FromOrder(ivec best, Chromosome& chrom);
-    void Migration(int cores, int rank);
 
     //void crossing(Chromosome& mother, Chromosome& father);
     void crossover(Chromosome& mother, Chromosome& father);   //  taglia i due cammini nella stessa posizione, conserva la prima parte di entrambi e completa la seconda parte con le citta mancanti nell'ordine in cui appaiono nell'altro cammino        
+    void FromOrder(vec best);
+    // per la migrazione
+    void Migration(int cores, int rank);
     
 };
 

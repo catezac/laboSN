@@ -24,6 +24,20 @@ void Chromosome::Square(){ // creazione delle città nel quadrato
     }
 }
 
+Chromosome& Chromosome::operator=(const Chromosome& other) {
+    if (this != &other) {
+        _cities = other._cities;
+        _ncity = other._ncity;
+        _check = other._check;
+        _radius = other._radius;
+        _length = other._length;
+        _config = other._config;
+        _x = other._x;
+        _rnd = other._rnd;
+    }
+    return *this;
+}
+
 void Chromosome::File(string filename){
     ifstream read(filename);
     
@@ -52,16 +66,22 @@ void Chromosome::File(string filename){
     read.close();
 }
 
+
+int Chromosome:: get_ncity(){
+    return _ncity;
+}
+
 void Chromosome::configuration() { 
     // inizializzazione della config del sistema e settaggio delle posizioni delle città
     _ncity = SetParameter("input.dat", "NCITY");
     auto c = SetConfig("input.dat", "CONFIGURATION");
     _config = c.first;
-    _cities.set_size(int(_ncity));
     if(_config == "circle"){
+        _cities.set_size(int(_ncity));
         _radius = stod(c.second);
         Circle();
     } else if(_config == "square"){
+        _cities.set_size(int(_ncity));
         _length = stod(c.second);
         Square();   
     } else if(_config == "file"){
@@ -110,8 +130,8 @@ double Chromosome::loss() {
 }
 
 void Chromosome::permutation(){  //scambia la posizione di due città casuali
-    int i = rint(_rnd.Rannyu(1, _ncity-1));
-    int j = rint(_rnd.Rannyu(1, _ncity-1));
+    int i = rint(_rnd.Rannyu(0, _ncity-1));
+    int j = rint(_rnd.Rannyu(0, _ncity-1));
     if (i !=0 && i!= j) {
         City city_appo;
         city_appo = _cities(i);

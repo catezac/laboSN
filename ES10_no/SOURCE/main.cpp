@@ -5,26 +5,27 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-
+    // MPI inizialization
     int size, rank;
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    cout << rank << endl;
     Population pop;
-    pop.initialize();
+    pop.initialize(rank);
 
     Population new_pop;
-    new_pop.initialize();
+    new_pop.initialize(rank);
 
     int n_generations = SetParameter("input.dat", "NGENERATIONS");
     double p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     int migration = SetParameter("input.dat", "MIGRATION");
-
+    
     pop.first_popul(); //genero la prima popolazione
     vec L1_medio(n_generations);
     vec L1(n_generations);
     pop.sorting();
-    if(rank == 0) pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config_iniziale.dat");
+    if(rank == 0)    pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config_iniziale.dat");
     for(int i = 0; i < n_generations; i++) {
         pop.sorting();
         L1(i) = pop._chromosome(pop._nchrom - 1).loss();
@@ -43,21 +44,20 @@ int main(int argc, char* argv[]) {
             j+=2;
         }
         pop = new_pop;
-
         pop.Mutation();
-        if(i%migration == 0 & i !=0) {
-            cout << "Migrazione " << i/migration << endl;
-            pop.sorting();
-            pop.Migration(size, rank);
-        }
+        // if(i%migration == 0 & i !=0){
+            // pop.sorting();
+            // pop.Migration(size, rank);
+        // }
+        //pop.sorting();
+        //L1(i) = pop._chromosome(pop._nchrom - 1).loss();
     }
     pop.sorting();
-    if (rank == 0) {
+    if(rank== 0){
         pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config.dat");
         WriteToFile("../OUTPUT/L1_medio.dat", n_generations, L1_medio);
         WriteToFile("../OUTPUT/L1_best.dat", n_generations, L1);
     }
-
     MPI_Finalize();
     return 0;
 }
