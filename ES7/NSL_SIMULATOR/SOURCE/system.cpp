@@ -594,7 +594,15 @@ void System :: measure(){ // Measure properties
   // TEMPERATURE ///////////////////////////////////////////////////////////////
   if (_measure_temp and _measure_kenergy) _measurement(_index_temp) = (2.0/3.0) * kenergy_temp;
   // PRESSURE //////////////////////////////////////////////////////////////////
-  if (_measure_pressure) _measurement[_index_pressure] = _rho * (2.0/3.0) * kenergy_temp + (_ptail*_npart + 48.0*virial/3.0)/_volume;
+  if(_measure_pressure){
+    if(_sim_type == 0){
+        _measurement[_index_pressure] = _rho * (2.0/3.0) * kenergy_temp + (_ptail*_npart + 48.0*virial/3.0)/(_volume);
+      }
+      if(_sim_type == 1){
+        _measurement[_index_pressure] = _rho * _temp + (_ptail*_npart + 48.0*virial/3.0)/(_volume);
+      }
+  }
+  //if (_measure_pressure) _measurement[_index_pressure] = _rho * (2.0/3.0) * kenergy_temp + (_ptail*_npart + 48.0*virial/3.0)/_volume;
   // MAGNETIZATION /////////////////////////////////////////////////////////////
 // TO BE FIXED IN EXERCISE 6
   if(_sim_type > 1){
