@@ -16,7 +16,7 @@ using namespace arma;
 class Population {
     private:
     Random _rnd;
-    
+    Chromosome _first;
     double _p_permutation, _p_permutation_m, _p_shift, _p_inversion, _p_crossover;
         
     public:

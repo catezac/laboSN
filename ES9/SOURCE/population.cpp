@@ -14,16 +14,20 @@ void Population :: initialize() {
     _p_inversion = SetParameter("input.dat", "P_INVERSION");
     _p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     _chromosome.set_size(_nchrom);
-    _chromosome(0).configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+    _first.configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
     return;
 }
 
 void Population::first_popul(){  //creo la prima popolazione permutando in ogni cromosoma due città casuali, tenendo conto che la prima città deve rimanere ferma
-    for(int j = 1; j<_nchrom; j++){
-        _chromosome(j) = _chromosome(0);
+    for(int j = 0; j<_nchrom; j++){
+        _chromosome(j) = _first;
         for(int i = 0; i< 2*34; i++){
-            _chromosome(j).permutation(); 
+            _chromosome(j).permutation();
         }
+        _chromosome(j).check();
+            if(_chromosome(j)._check == "no") {
+                cout << "Problem in the " << j << "chromosome in the creation of the first population" << endl;
+            }
     }
 }
 

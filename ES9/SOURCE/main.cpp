@@ -14,6 +14,9 @@ int main() {
     double p_crossover = SetParameter("input.dat", "P_CROSSOVER");
 
     pop.first_popul(); //genero la prima popolazione
+    // for(int i = 0; i<34; i++){
+        // cout << pop._chromosome(0)._cities(i).getpos(0) << endl;
+    // }
     vec L1_medio(n_generations);
     vec L1(n_generations);
     pop.sorting();
@@ -37,10 +40,8 @@ int main() {
         }
         pop = new_pop;
         pop.Mutation();
-        //pop.sorting();
-        //L1(i) = pop._chromosome(pop._nchrom - 1).loss();
     }
-    //pop.sorting();
+    pop.sorting();
     pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config.dat");
     WriteToFile("../OUTPUT/L1_medio.dat", n_generations, L1_medio);
     WriteToFile("../OUTPUT/L1_best.dat", n_generations, L1);

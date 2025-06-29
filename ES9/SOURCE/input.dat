@@ -1,7 +1,7 @@
 NCITY                  34
-CONFIGURATION          circle   1.
-NCHROMOSOME            400
-NGENERATIONS           400
+CONFIGURATION          file   cap_prov_ita.dat
+NCHROMOSOME            700
+NGENERATIONS           800
 P_PERMUTATION          0.15
 P_PERMUTATION_M        0.1
 P_SHIFT                0.2

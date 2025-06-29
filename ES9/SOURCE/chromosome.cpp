@@ -9,19 +9,47 @@ using namespace arma;
 
 void Chromosome::Circle() { // creazione delle città sul cerchio
     for(int i = 0; i < _ncity ;i++){
-        _cities(i)._pos[0] = i;
+        _cities(i)._pos(0) = i;
         double r = _rnd.Rannyu(0, 2*M_PI);  // la città è collocata in base all'angolo sulla circonferenza
-        _cities(i)._pos[1] = _radius * cos(r);
-        _cities(i)._pos[2] = _radius * sin(r);
+        _cities(i)._pos(1) = _radius * cos(r);
+        _cities(i)._pos(2) = _radius * sin(r);
     }
 }
 
 void Chromosome::Square(){ // creazione delle città nel quadrato
     for(int i = 0; i < _ncity ;i++){
-        _cities(i)._pos[0] = i;
-        _cities(i)._pos[1] = _rnd.Rannyu(0,_length);
-        _cities(i)._pos[2] = _rnd.Rannyu(0,_length);
+        _cities(i)._pos(0) = i;
+        _cities(i)._pos(1) = _rnd.Rannyu(0,_length);
+        _cities(i)._pos(2) = _rnd.Rannyu(0,_length);
     }
+}
+
+void Chromosome::File(string filename){
+    ifstream read(filename);
+    
+    if (!read.is_open()) {
+        cerr << "Errore nell'apertura del file!" << std::endl;
+    }
+    int N=0;
+    string riga;
+    while(getline(read, riga)){
+        N++;
+    }
+    // Torna all'inizio del file
+    read.clear();           // resetta EOF
+    read.seekg(0, ios::beg); // torna all'inizio
+    _ncity = N;
+    _cities.set_size(int(_ncity));
+    double x = 0;
+    double y = 0;
+    for(int i = 0; i<N;i++){
+        read >> x >> y;
+        _cities(i)._pos(0) = i;
+        _cities(i)._pos(1) = x;
+        _cities(i)._pos(2) = y;
+    }
+
+    read.close();
 }
 
 void Chromosome::configuration() { 
@@ -31,11 +59,13 @@ void Chromosome::configuration() {
     _config = c.first;
     _cities.set_size(int(_ncity));
     if(_config == "circle"){
-        _radius = c.second;
+        _radius = stod(c.second);
         Circle();
     } else if(_config == "square"){
-        _length = c.second;
+        _length = stod(c.second);
         Square();   
+    } else if(_config == "file"){
+        File(c.second);
     } else {
         cerr << "PROBLEM: unknown configuration" << endl;
         exit(EXIT_FAILURE);
@@ -80,8 +110,8 @@ double Chromosome::loss() {
 }
 
 void Chromosome::permutation(){  //scambia la posizione di due città casuali
-    int i = rint(_rnd.Rannyu(0, _ncity-1));
-    int j = rint(_rnd.Rannyu(0, _ncity-1));
+    int i = rint(_rnd.Rannyu(1, _ncity-1));
+    int j = rint(_rnd.Rannyu(1, _ncity-1));
     if (i !=0 && i!= j) {
         City city_appo;
         city_appo = _cities(i);
