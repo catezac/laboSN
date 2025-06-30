@@ -119,16 +119,16 @@ int main(){
 
     for(int i = 0; i < N; i++) {
         double sum = 0;
-        double sum2 = 0;
+        //double sum2 = 0;
         for(int j = 0; j < L; j++) {
             metro(rnd, step, x, mu_best, sigma_best, acceptance);
             file << setw(12) << x << endl;
             Hpsi = eval_Hpsi(x, mu_best, sigma_best, 1.0, 1.0);
             sum += Hpsi;
-            sum2 += pow(Hpsi, 2);
+            //sum2 += pow(Hpsi, 2);
         }
         ave[i] = sum / L;
-        av2[i] = sum2 / L;
+        av2[i] = pow(ave[i],2);
         err[i] = error(ave, av2, i);
     }
     file.close();
