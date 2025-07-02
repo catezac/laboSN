@@ -1,8 +1,25 @@
 #include <iostream>
+#include <iomanip>
 #include "population.h"
 #include "mpi.h"
 
 using namespace std;
+
+
+void print_progress_bar(float progress) {
+  int bar_width = 50;
+  int pos = bar_width * progress / 100.0;
+
+  cout << "\rProgress: [";
+  for (int j = 0; j < bar_width; ++j) {
+      if (j < pos) cout << "=";
+      else if (j == pos) cout << ">";
+      else cout << " ";
+  }
+  cout << "] " << fixed << setprecision(1) << progress << "%";
+  cout.flush();
+}
+
 
 int main(int argc, char* argv[]) {
 
@@ -11,11 +28,11 @@ int main(int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     Population pop;
-    pop.initialize();
+    pop.initialize(rank);
 
     Population new_pop;
-    new_pop.initialize();
-
+    new_pop.initialize(rank);
+    cout << "Inizializzazione completata" << endl;
     int n_generations = SetParameter("input.dat", "NGENERATIONS");
     double p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     int migration = SetParameter("input.dat", "MIGRATION");
@@ -26,6 +43,7 @@ int main(int argc, char* argv[]) {
     pop.sorting();
     if(rank == 0) pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config_iniziale.dat");
     for(int i = 0; i < n_generations; i++) {
+        if(rank == 0) print_progress_bar(float(i+1)/n_generations*100);
         pop.sorting();
         L1(i) = pop._chromosome(pop._nchrom - 1).loss();
         L1_medio(i) = pop.L1_ave();
@@ -46,13 +64,23 @@ int main(int argc, char* argv[]) {
 
         pop.Mutation();
         if(i%migration == 0 & i !=0) {
-            cout << "Migrazione " << i/migration << endl;
+            //cout << "Migrazione " << i/migration << endl;
             pop.sorting();
             pop.Migration(size, rank);
         }
     }
     pop.sorting();
-    if (rank == 0) {
+    double loss; 
+    loss = pop._chromosome(pop._nchrom-1).loss();
+    
+    double send[2] = {loss, static_cast<double>(rank)};
+    double rec[2];
+    MPI_Reduce(send, rec, 1, MPI_2DOUBLE_PRECISION, MPI_MINLOC, 0, MPI_COMM_WORLD);
+    MPI_Bcast(rec, 2, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    int best_rank = rec[1];
+    //cout << best_rank << endl;
+
+    if (rank == best_rank) {
         pop._chromosome(pop._nchrom-1).Write_Config("../OUTPUT/best_config.dat");
         WriteToFile("../OUTPUT/L1_medio.dat", n_generations, L1_medio);
         WriteToFile("../OUTPUT/L1_best.dat", n_generations, L1);

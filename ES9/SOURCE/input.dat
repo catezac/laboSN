@@ -1,11 +1,11 @@
 NCITY                  34
-CONFIGURATION          square   1.
+CONFIGURATION          file   cap_prov_ita.dat
 NCHROMOSOME            500
-NGENERATIONS           400
+NGENERATIONS           1000
 P_PERMUTATION          0.15
 P_PERMUTATION_M        0.1
 P_SHIFT                0.2
 P_INVERSION            0.2
-P_CROSSOVER            0.8
+P_CROSSOVER            0.9
 
 ENDINPUT

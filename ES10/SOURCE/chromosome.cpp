@@ -52,7 +52,7 @@ void Chromosome::File(string filename){
     read.close();
 }
 
-void Chromosome::configuration() { 
+void Chromosome::configuration(int rank) { 
     // inizializzazione della config del sistema e settaggio delle posizioni delle città
     _ncity = SetParameter("input.dat", "NCITY");
     auto c = SetConfig("input.dat", "CONFIGURATION");
@@ -69,7 +69,8 @@ void Chromosome::configuration() {
     } else {
         cerr << "PROBLEM: unknown configuration" << endl;
         exit(EXIT_FAILURE);
-    } 
+    }
+    _rnd.SetSeed(rank+1);
     return;
 }
 

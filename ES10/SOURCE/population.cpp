@@ -6,7 +6,7 @@
 using namespace std;
 using namespace arma;
 
-void Population :: initialize() {
+void Population :: initialize(int rank) {
     _nchrom = SetParameter("input.dat", "NCHROMOSOME");
     _p_permutation = SetParameter("input.dat", "P_PERMUTATION");
     _p_permutation_m = SetParameter("input.dat", "P_PERMUTATION_M");
@@ -14,7 +14,8 @@ void Population :: initialize() {
     _p_inversion = SetParameter("input.dat", "P_INVERSION");
     _p_crossover = SetParameter("input.dat", "P_CROSSOVER");
     _chromosome.set_size(_nchrom);
-    _first.configuration(); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+    _first.configuration(rank+1); // il primo cromosoma ha le città nell'ordine in cui sono state create (0, 1, 2,..., 33)
+    
     return;
 }
 
@@ -174,44 +175,39 @@ void Population:: FromOrder(ivec best, Chromosome& chrom){
     int N = best.size();
     for(int i = 0; i< N; i++){
         for(int j= 0; j<N; j++){
-            //cout << best(i)<< "     " <<  _first._cities(j).getpos(0) << endl;
             if(best(i)==_first._cities(j).getpos(0)){
-                cout << "Sto ricostruendo il cammino con la città" << i << endl;
+                //cout << "Sto ricostruendo il cammino con la città" << i << endl;
+                //cout << _first._cities(j).getpos(0) << chrom._cities(i).getpos(0) << endl;
                 chrom._cities(i).setpos(0, _first._cities(j).getpos(0));
                 chrom._cities(i).setpos(1, _first._cities(j).getpos(1));
                 chrom._cities(i).setpos(2, _first._cities(j).getpos(2));
+                //cout << chrom._cities(i).getpos(0) << endl;
                 break;
             }
+            
         }
-    }
-    for(int i = 0; i< N; i++){
-        cout << _first._cities(i).getpos(0) << "        " << chrom._cities(i).getpos(0) << endl;
     }
 }
 
 void Population:: Migration(int cores, int rank){
+    // Debug: verifica lo stato della popolazione
+    // cout << "Rank " << rank << ": _nchrom=" << _nchrom << ", _first._ncity=" << _first._ncity << endl;
+    // cout << "Rank " << rank << ": popolazione valida? " << (_chromosome.size() > 0 ? "SI" : "NO") << endl;
+    // 
+    // if(_nchrom > 0) {
+        // cout << "Rank " << rank << ": loss miglior cromosoma = " << _chromosome(_nchrom-1).loss() << endl;
+    // }
     int N = _first._ncity;
-    // cout << N << endl;
-    // cout << _chromosome(_nchrom-1)._ncity << endl;
-    ivec best(N);
+    ivec best(N, 1);
     imat all_best(N,cores);
     for(int i = 0; i<N; i++){
-        best(i) = int(_chromosome(_nchrom-1)._cities(i).getpos(0));
+        best(i, 0) = int(_chromosome(_nchrom-1)._cities(i).getpos(0));
     }
-
-    //best.print();
-    MPI_Gather(best.memptr(), N, MPI_INTEGER, all_best.memptr(), N, MPI_INTEGER, 0, MPI_COMM_WORLD);
-
-    if(rank==0){
-        all_best = shuffle(all_best, 1);
-    }
-
-    MPI_Bcast(all_best.memptr(), N*cores, MPI_INTEGER, 0, MPI_COMM_WORLD);
+    //cout << "best del rank" << rank << endl;
+    MPI_Gather(best.memptr(), N, MPI_DOUBLE, all_best.memptr(), N, MPI_DOUBLE, 0, MPI_COMM_WORLD); // devo metter double anche se sono int perchè la dimensione delle cose di armadillo è diversa
+    all_best = shuffle(all_best, 1);
+    MPI_Bcast(all_best.memptr(), N*cores, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     //mettere qualcosa in modo che i nuovi best ridiventino cromosomi associando id della citta a posizione
     FromOrder(all_best.col(rank), _chromosome(_nchrom-1));
-    // if (rank == 1){
-        // for(int i = 0; i < N; i++){
-            // cout << all_best.col(rank) << "        " << _first._cities(i).getpos(0)<< "       "<<_chromosome(_nchrom-1)._cities(i).getpos(0) << endl;
-        // }
-    // }
+
 }

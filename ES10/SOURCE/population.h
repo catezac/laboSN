@@ -27,7 +27,7 @@ class Population {
     Population(int N ){
         _nchrom = N;
         _chromosome.set_size(N);};
-    void initialize();  // inizializzo il sistema 
+    void initialize(int rank);  // inizializzo il sistema 
     void first_popul(); /*creo la prima popolazione: primo cromosoma che rispetta i vincoli banale è [1,2,3,..., 34]
                            per creare gli altri si permutano città in individui gia presenti, infatti la permutazione non rompe i vincoli */
     void sorting();     //riordina la popolazione da quello con funzione loss più alta a funzione loss piu bassa
@@ -37,8 +37,6 @@ class Population {
     void Mutation();
     void FromOrder(ivec best, Chromosome& chrom);
     void Migration(int cores, int rank);
-
-    //void crossing(Chromosome& mother, Chromosome& father);
     void crossover(Chromosome& mother, Chromosome& father);   //  taglia i due cammini nella stessa posizione, conserva la prima parte di entrambi e completa la seconda parte con le citta mancanti nell'ordine in cui appaiono nell'altro cammino        
     
 };
