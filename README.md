@@ -1,6 +1,6 @@
-Istruzioni per gli esercizi
+### Istruzioni per gli esercizi
 
-I notebook con le soluzioni degli esercizi sono quelli con `_solution`.
+I notebook con le soluzioni degli esercizi sono quelli con `_solution.ipynb`.
 
 Ogni cartella ha il suo `Makefile`.
 
